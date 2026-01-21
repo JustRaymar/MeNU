@@ -25,14 +25,14 @@
 		<a href="MENUOwner.php" class="header-button"><p class="header-logout">MY STORE PRODUCTS</p></a>
 		<a href="MENUOwnerIncoming.php" class="active-button"><p class="header-logout">INCOMING ORDERS</p></a>
 		<a href="MENUOwnerHistory.php" class="header-button"><p class="header-logout">ORDER HISTORY</p></a>
-		<a href="MENUOwnerStats.php" class="header-button"><p class="header-logout">ORDER STATISTICS</p></a>
+		<a href="MENUOwnerStats.php" class="header-button"><p class="header-logout">SALES REPORTS</p></a>
 		<a href="logout.php" class="header-button"><p class="header-logout">LOGOUT</p></a>
     </header>
 	<br/>
 	<center>
 		<table border="1px">
 			<tr>
-				<th colspan=3>INCOMING ORDERS</th>
+				<th colspan=2>INCOMING ORDERS</th>
 				<th><button class="closebtn">Close orders</button></th>
 			</tr>
 			<?php
@@ -55,14 +55,70 @@
 						echo "
 						<tr class='pending'>
 							<td><img style='height: 200px; width: 100%; object-fit: contain;' src='modals/".$product."_r.png'><p class='prodname'>".strtoupper($product)."</p></td>
-							<td style='font-size: 30px;'>x".$row['Quantity']."</td>
-							<td style='font-size: 30px;'>₱".$row['OrderPrice']."</td>
-							<td><button class='checkout-button' onclick=\"window.location.href='MENUOwnerStart.php';\">Start Order</button></td>
+							<td style='font-size: 30px;'>Order #".$row['OrderID']."<br/>
+								x".$row['Quantity']." ₱".$row['OrderPrice']."<br/>
+							<td><button class='checkout-button' onclick='openModal()'>Process Order</button></td>
 						</tr>";					
 					}
 				}
 			?>
 		</table>
+		
+		<div id="orderModal" class="modal">
+			<div class="modal-content">
+				<span class="close-modal">&times;</span>
+				<div class="order-content">
+					<h2>Processing Order...</h2>
+					<form id="edit-product-form">
+						<img style='height: 400px; width: 100%; object-fit: contain;' src='modals/Pancit Canton_r.png'>
+						<table class="receipt">
+							<tr><td>Order ID:</td><td>64</td></tr>
+							<tr><td>Username:</td><td>asdf</td></tr>
+							<tr><td>Product Name:</td><td>Pancit Canton</td></tr>
+							<tr><td>Quantity:</td><td>x2</td></tr>
+							<tr><td>Total Price:</td><td>₱60</td></tr>
+							<tr>
+								<td>Non-cash payment</td>
+								<td>
+									<input type="checkbox" id="myCheckbox">
+									<div class="content-to-toggle">
+										<input type="text" placeholder="Reference number">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td><button type="button" class="clear-button">Cancel the order</button></td>
+								<td><button type="button" class="checkout-button">Submit the order</button></td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<script>
+			// open modal
+			function openModal() {
+				document.getElementById("orderModal").style.display = "block";
+			}
+
+			// close modal
+			function closeModal() {
+				document.getElementById("orderModal").style.display = "none";
+			}
+
+			// close when clicking X
+			document.querySelector(".close-modal").onclick = closeModal;
+
+			// close when clicking outside modal
+			window.onclick = function(event) {
+				const modal = document.getElementById("orderModal");
+				if (event.target === modal) {
+					closeModal();
+				}
+			};
+		</script>
+		
 	</center>
 	</main>
 	</body>

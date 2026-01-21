@@ -8,16 +8,57 @@
 	</head>
 	<body>
 	<?php
+		// ---------- existing session + connection (kept as you requested) ----------
 		session_start();
 		include("connection.php");
 		if (!isset($_SESSION['user_id'])) {
 			header("Location: MENULogin.php");
 			exit();
 		}
-		//echo '<script>alert("Successfully logged in as '.$_SESSION['user_id'].'!");</script>';
 		$sqlId = "SELECT * FROM sellers WHERE UserID = ".$_SESSION['user_id'];
 		$resId = $con->query($sqlId);
 		$rowId = $resId->fetch_assoc();
+
+		// -----------------------------
+		// Initialize dashboard variables
+		// -----------------------------
+		// Make sure selectedProduct exists before HTML uses it
+		$selectedProduct = isset($_GET['product']) ? $_GET['product'] : "All";
+
+		// Determine product image path
+		if ($selectedProduct === "All") {
+			$productImage = "menu.png";
+		} else {
+			$productImage = "modals/".$selectedProduct."_r.png";
+		}
+
+		// Temporary/mock values for UI — replace with SQL integration later if desired.
+		$totalOrders = 0;
+		$totalRevenue = 0;
+		$stockRemaining = "-";
+		$percentDiffVal = 0.0; // numeric value for comparisons
+		$percentDiffDisplay = "+0%"; // formatted for display
+
+		switch ($selectedProduct) {
+			case "Pancit Canton":
+				$totalOrders = 32; $totalRevenue = 1560; $stockRemaining = 40; $percentDiffVal = 12; break;
+			case "Pancit Canton w Egg":
+				$totalOrders = 21; $totalRevenue = 1575; $stockRemaining = 25; $percentDiffVal = -7; break;
+			case "Shawarma Rice":
+				$totalOrders = 18; $totalRevenue = 1620; $stockRemaining = 30; $percentDiffVal = 4; break;
+			case "Siomai Rice":
+				$totalOrders = 26; $totalRevenue = 1560; $stockRemaining = 50; $percentDiffVal = 9; break;
+			case "Buttered Cheese Corn":
+				$totalOrders = 40; $totalRevenue = 2000; $stockRemaining = 35; $percentDiffVal = 22; break;
+			case "Ham and Cheese Sandwhich":
+				$totalOrders = 17; $totalRevenue = 1020; $stockRemaining = 15; $percentDiffVal = -3; break;
+			default:
+				// All products
+				$totalOrders = 154; $totalRevenue = 9335; $stockRemaining = 230; $percentDiffVal = 15; break;
+		}
+
+		// Format percent display string
+		$percentDiffDisplay = ($percentDiffVal >= 0 ? "+" : "") . number_format($percentDiffVal, 2) . "%";
 	?>
     <main>
 	<header>
@@ -25,139 +66,114 @@
 		<a href="MENUOwner.php" class="header-button"><p class="header-logout">MY STORE PRODUCTS</p></a>
 		<a href="MENUOwnerIncoming.php" class="header-button"><p class="header-logout">INCOMING ORDERS</p></a>
 		<a href="MENUOwnerHistory.php" class="header-button"><p class="header-logout">ORDER HISTORY</p></a>
-		<a href="MENUOwnerStats.php" class="active-button"><p class="header-logout">ORDER STATISTICS</p></a>
+		<a href="MENUOwnerStats.php" class="active-button"><p class="header-logout">SALES REPORTS</p></a>
 		<a href="logout.php" class="header-button"><p class="header-logout">LOGOUT</p></a>
     </header>
-	<center>
-		<div>
-			<div class="pie-chart-container">
-			  <div class="pie-chart"></div>
-			  <div class="hover-zone zone-a" data-img="modals/Pancit Canton.png"></div>
-			  <div class="hover-zone zone-b" data-img="modals/Shawarma Rice.png"></div>
-			  <div class="hover-zone zone-c" data-img="modals/Buttered Cheese Corn.png"></div>
-			  <div class="center-circle">
-				<span class="center-text">Most ordered</span>
-				<img class="hover-image" src="" alt="Product image">
-			  </div>
-			</div>
-			<div class="legend">
-			  <div class="legend-item" data-img="modals/Pancit Canton_r.png">
-				<span class="legend-color color-a"></span> Pancit Canton (40%)
-			  </div>
-			  <div class="legend-item" data-img="modals/Shawarma Rice_r.png">
-				<span class="legend-color color-b"></span> Shawarma Rice (30%)
-			  </div>
-			  <div class="legend-item" data-img="modals/Buttered Cheese Corn_r.png">
-				<span class="legend-color color-c"></span> Buttered Cheese Corn (30%)
-			  </div>
-			</div>
-			<script>
-				function setupHoverInteractions(container) {
-				  const img = document.querySelector('.hover-image');
-				  const text = container.querySelector('.center-text');
-				  const triggers = [
-					...container.querySelectorAll('.hover-zone'),
-					...document.querySelectorAll('.legend-item')
-				  ];
 
-				  triggers.forEach(trigger => {
-					trigger.addEventListener('mouseenter', () => {
-					  img.src = trigger.dataset.img;
-					  img.style.opacity = '1';
-					  text.style.opacity = '0.5';
-					});
-					trigger.addEventListener('mouseleave', () => {
-					  img.style.opacity = '0';
-					  text.style.opacity = '1';
-					});
-				  });
-				}
+	<!-- === DASHBOARD CONTENT (kept under your header exactly) === -->
+	<div class="dashboard-wrapper">
+		<div class="dashboard-content">
+			<h2 class="dashboard-title">Sales Overview</h1>
 
-				document.querySelectorAll('.pie-chart-container').forEach(setupHoverInteractions);
-			</script>
-			<br/><br/><br/><br/><br/><br/><br/><br/>
-			<?php
-				//Top 3 most ordered items
-				/*<table class='chart'>
-				<tr>
-				<th>Top Ordered Products</th>
-				<th>Amount ordered</th>
-				</tr>
-				";
-				$sqlA = "SELECT ProductName, SUM(Quantity) AS TotalOrdered FROM orders WHERE Status = 'Completed' GROUP BY ProductID ORDER BY TotalOrdered DESC LIMIT 3";
-				$resA = $con->query($sqlA);
-				if ($resA->num_rows>0) {
-					while ($row=$resA->fetch_assoc()) {
-						echo "
-						<tr>
-							<td><img src='modals/".$row['ProductName'].".png' class='img' alt='productimg'/></td>
-							<td>".$row['TotalOrdered']."</td>
-						</tr>
-						";
-					}
-				}*/
-				/*<table class='chart'>
-				<tr>
-				<th>Top Earning Products</th>
-				<th>Profit amount</th>
-				</tr>
-				";
-				$sqlB = "SELECT ProductName, SUM(OrderPrice) AS TotalPrices FROM orders WHERE Status = 'Completed' GROUP BY ProductID ORDER BY TotalPrices DESC LIMIT 3";
-				$resB = $con->query($sqlB);
-				if ($resB->num_rows>0) {
-					while ($row=$resB->fetch_assoc()) {
-						echo "
-						<tr>
-							<td><img src='modals/".$row['ProductName'].".png' class='img' alt='productimg'/></td>
-							<td>₱".$row['TotalPrices']."</td>
-						</tr>
-						";
-					}
-				}
-				echo "
-				</table><br/><br/>";*/
+			<!-- PRODUCT PANEL -->
+			<form method="GET">
+				<div class="product-panel">
+					<select name="product" class="product-select" onchange="this.form.submit()">
+						<!-- explicit value attributes prevent undefined-index surprises -->
+						<option value="All" <?= $selectedProduct === "All" ? "selected" : "" ?>>All</option>
+						<option value="Pancit Canton" <?= $selectedProduct === "Pancit Canton" ? "selected" : "" ?>>Pancit Canton</option>
+						<option value="Pancit Canton w Egg" <?= $selectedProduct === "Pancit Canton w Egg" ? "selected" : "" ?>>Pancit Canton w Egg</option>
+						<option value="Shawarma Rice" <?= $selectedProduct === "Shawarma Rice" ? "selected" : "" ?>>Shawarma Rice</option>
+						<option value="Siomai Rice" <?= $selectedProduct === "Siomai Rice" ? "selected" : "" ?>>Siomai Rice</option>
+						<option value="Buttered Cheese Corn" <?= $selectedProduct === "Buttered Cheese Corn" ? "selected" : "" ?>>Buttered Cheese Corn</option>
+						<option value="Ham and Cheese Sandwhich" <?= $selectedProduct === "Ham and Cheese Sandwhich" ? "selected" : "" ?>>Ham and Cheese Sandwhich</option>
+					</select>
+				</div>
+			</form>
 
-				
-				//Item most cancelled
-				$sqlC = "SELECT ProductName, SUM(Quantity) AS TotalOrdered FROM orders WHERE Status = 'Cancelled' GROUP BY ProductID ORDER BY TotalOrdered DESC LIMIT 1;";
-				$resC = $con->query($sqlC);
-				$rowC=$resC->fetch_assoc();
-				$itemC = $rowC['ProductName'];
-				echo "
-				<table class='chart'>
-					<tr>
-						<th colspan=6>Special stats</th>
-					</tr>
-					<tr>
-						<td>Item with most orders cancelled</td>
-						<td><img src='modals/".$itemC."_r.png' class='img' alt='productimg'/><p class='prodname'>".$itemC."</p></td>
-				";
-				
-				//Item most completed
-				$sqlD = "SELECT ProductName, SUM(Quantity) AS TotalOrdered FROM orders WHERE Status = 'Completed' GROUP BY ProductID ORDER BY TotalOrdered DESC LIMIT 1";
-				$resD = $con->query($sqlC);
-				$rowD=$resD->fetch_assoc();
-				$itemD = $rowD['ProductName'];
-				echo "
-						<td>Item with most orders completed</td>
-						<td><img src='modals/".$itemD."_r.png' class='img' alt='productimg'/><p class='prodname'>".$itemD."</p></td>
-				";
-				
-				//Most ordered by customers with Priority
-				$sqlE = "SELECT ProductName, SUM(Quantity) AS TotalOrdered FROM orders WHERE Status = 'Completed' and Priority = 1 GROUP BY ProductID ORDER BY TotalOrdered DESC LIMIT 1";
-				$resE = $con->query($sqlC);
-				$rowE=$resE->fetch_assoc();
-				$itemE = $rowE['ProductName'];
-				echo "
-						<td>Item ordered most by customers with Priority</td>
-						<td><img src='modals/".$itemE."_r.png' class='img' alt='productimg'/><p class='prodname'>".$itemE."</p></td>
-					</tr>
-				</table>
-				";
-			?>
-			<p></p>
-		</div>
-	</center>
+			<div class="stats-grid">
+				<!-- TOP 4 CARDS -->
+				<div class="stats-card">
+					<h3>Total Orders for Today,</h3>
+					<p class="stat-date">November 12th, 2025</p>
+					<div class="stats-value"><?= number_format($totalOrders) ?></div>
+				</div>
+
+				<div class="stats-card">
+					<h3>Total Revenue for Today,</h3>
+					<p class="stat-date">November 12th, 2025</p>
+					<div class="stats-value">₱<?= number_format($totalRevenue, 2) ?></div>
+				</div>
+
+				<!-- STOCK AT CRITICAL LEVELS CARD (HOVERABLE) -->
+				<div class="stats-card critical-hover-card">
+					<h3>Stock at Critical Levels</h3>
+					<div class="stat-value">
+						<span style="font-size: 40px; font-weight: bold; color: #BF3636;">3</span>
+					</div>
+					<p style="color: #666; font-size: 14px; margin-top: 10px;">Hover to view</p>
+
+					<!-- HOVER POPUP -->
+					<div class="critical-popup">
+						<h4>Critical Stock Items</h4>
+						<ul>
+							<li>Pancit Canton — 3 left</li>
+							<li>Siomai Rice — 5 left</li>
+							<li>Ham and Cheese Sandwich — 2 left</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="stats-card">
+					<h3>Monthly Growth</h3><br/>
+					<div class="stats-value <?= ($percentDiffVal >= 0) ? 'growth-positive' : 'growth-negative' ?>">
+						<?= $percentDiffDisplay ?>
+					</div>
+				</div>
+
+				<!-- PRODUCT IMAGE CARD (150% WIDTH) -->
+				<div class="product-image-card">
+					<h3>Selected Product</h3>
+					<img src="<?= htmlspecialchars($productImage) ?>" alt="Product Image" class="product-image-large">
+				</div>
+
+				<!-- CALENDAR CARD (RIGHT) -->
+				<div class="calendar-card">
+					<div class="calendar-header">
+						<button class="month-nav" onclick="prevMonth()">&lt;</button>
+						<span class="calendar-month">November 2025</span>
+						<button class="month-nav" onclick="nextMonth()">&gt;</button>
+					</div>
+					<div class="calendar-grid">
+						<div class="calendar-day">Sun</div>
+						<div class="calendar-day">Mon</div>
+						<div class="calendar-day">Tue</div>
+						<div class="calendar-day">Wed</div>
+						<div class="calendar-day">Thu</div>
+						<div class="calendar-day">Fri</div>
+						<div class="calendar-day">Sat</div>
+						<!-- Placeholder dates -->
+						<?php for($i=1;$i<=30;$i++): ?>
+							<div class="calendar-date"><?= $i ?></div>
+						<?php endfor; ?>
+						<script>
+							function prevMonth() {
+								alert("Previous month clicked (UI only)");
+							}
+
+							function nextMonth() {
+								alert("Next month clicked (UI only)");
+							}
+						</script>
+
+					</div>
+				</div>
+
+			</div> <!-- end stats-grid -->
+
+		</div> <!-- end dashboard-content -->
+	</div> <!-- end dashboard-wrapper -->
+
 	</main>
 	</body>
 </html>

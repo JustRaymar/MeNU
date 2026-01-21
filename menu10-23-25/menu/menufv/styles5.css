@@ -554,94 +554,319 @@ input[type="text"] {
 	text-align: center;
 }
 
-.pie-chart-container {
-  position: relative;
-  margin: 40px auto 20px auto;
-  width: 400px;
-  height: 400px;
-  border-radius: 50%;
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.55);
 }
 
-.pie-chart {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(
-    #ff6384 0% 40%,
-    #36a2eb 40% 70%,
-    #ffcd56 70% 100%
-  );
-  z-index: 1;
+.modal-content {
+    background: white;
+    margin: 5% auto;
+    padding: 20px;
+    width: 50%;
+    border-radius: 10px;
+    position: relative;
 }
 
-.hover-zone {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: transparent;
-  z-index: 6;
-  cursor: pointer;
+.close-modal {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 30px;
+    cursor: pointer;
 }
 
-.zone-a {
-  clip-path: polygon(50% 50%, 100% 0%, 100% 40%, 50% 50%);
+.statslist {
+	text-align: right;
 }
-.zone-b {
-  clip-path: polygon(50% 50%, 100% 0%, 100% 30%, 50% 50%);
-  transform: rotate(144deg);
+
+.dashboard-wrapper {
+    display: block;
+    padding: 28px 30px;
 }
-.zone-c {
-  clip-path: polygon(50% 50%, 100% 0%, 100% 30%, 50% 50%);
-  transform: rotate(252deg);
+
+/* ensure content doesn't assume a left sidebar */
+.dashboard-content {
+    margin-left: 0;   /* IMPORTANT: previously used 240px for sidebar; removed */
+    padding-bottom: 60px;
+    max-width: 1200px;
+}
+
+/* responsive stat cards: wrap when the screen is narrow */
+.stats-grid {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* WRAPS nicely */
+    gap: 20px;
+}
+
+/* keep product-panel responsive */
+.product-panel {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap; /* allow the dropdown & image to stack on small screens */
+}
+
+/* product select/image sizes */
+.product-select {
+    padding: 10px 12px;
+    min-width: 240px;
+}
+
+.product-image {
+    width: 240px;
+    height: auto;
+    border-radius: 10px;
+    border: 3px solid #002557;
+}
+
+/* card tweaks to match your theme */
+.stats-card {
+    background: #fff;
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.stats-value {
+    font-size: 28px;
+    color: #002557;
+    margin-top: 8px;
+    font-weight: 700;
+}
+
+/* Container must be positioned for absolute popup */
+.critical-hover-card {
+    position: relative;
+    overflow: visible; /* allows popup to extend outside card */
+}
+
+/* Hidden popup */
+.critical-popup {
+    position: absolute;
+    bottom: 75%;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    width: 250px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 18px;
+    
+    box-shadow: 0px 8px 20px rgba(0,0,0,0.18);
+    border-top: 6px solid #38B6FF;
+    border-bottom: 6px solid #FFDE59;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 999;
+}
+
+.stat-card h3 {
+	margin-bottom: 0px;
+}
+
+.stat-date p {
+	margin-top: 0px;
+}
+
+/* Popup title */
+.critical-popup h4 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #002557;
+}
+
+/* Popup list */
+.critical-popup ul {
+    padding-left: 0;
+    margin: 10px 0 0 0;
+    list-style: none;
+}
+
+.critical-popup li {
+    background: #f9f9f9;
+    border-left: 5px solid #BF3636;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* Hover behavior */
+.critical-hover-card:hover .critical-popup {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(10px);
+}
+
+/* OPTIONAL: hide popup on mobile */
+@media (max-width: 700px) {
+    .critical-popup {
+        display: none;
+    }
 }
 
 
+.growth-positive { color: #00bf63 !important; }
+.growth-negative { color: #bf3636 !important; }
 
-.center-circle {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 160px;
-  height: 160px;
-  background: white;
-  border-radius: 50%;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
+/* small screens */
+@media (max-width: 600px) {
+    .product-image { width: 100%; max-width: 300px; }
+    .product-select { width: 100%; max-width: 520px; }
 }
 
-.hover-image {
-  position: absolute;
-  width: 200px;
-  height: auto;
-  object-fit: cover;
-  z-index: 5;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+/* Make the grid wrap responsively */
+.stats-grid {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
 }
 
-.legend {
-  margin-top: 20px;
-  text-align: center;
+/* Base stat card */
+.stats-card {
+    background: #fff;
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
 }
 
-.legend-item {
-  display: inline-flex;
-  align-items: center;
-  margin: 0 10px;
-  cursor: pointer;
+/* Product Image Card — fixed consistent size */
+.product-image-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    grid-column: span 2;
+    text-align: center;
+
+    /* Fixed height prevents card from resizing */
+    height: 380px;        
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
 }
 
-.legend-color {
-  width: 15px;
-  height: 15px;
-  border-radius: 3px;
-  margin-right: 8px;
+/* Product image stays consistent in height */
+.product-image-large {
+    height: 260px;        /* Fixed height for consistency */
+    width: auto;          /* Auto width to avoid distortion */
+    object-fit: contain;  /* Ensures it fits nicely */
+    margin-top: 10px;
+
+    border-radius: 14px;
+    border: 3px solid #002557;
 }
 
-.color-a { background-color: #ff6384; }
-.color-b { background-color: #36a2eb; }
-.color-c { background-color: #ffcd56; }
+@media (max-width: 700px) {
+    .product-image-card {
+        grid-column: span 1;
+        height: 350px; /* smaller height for phones */
+    }
+
+    .product-image-large {
+        height: 230px;
+    }
+}
+
+}
+
+/* Growth colors */
+.growth-positive { color: #00bf63 !important; }
+.growth-negative { color: #bf3636 !important; }
+
+/* Calendar Card */
+.calendar-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    height: 380px; /* match product image card */
+}
+
+/* Calendar header */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-month {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.month-nav {
+    background: #38B6FF;
+    border: none;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.month-nav:hover {
+    background: #223399;
+}
+
+/* Calendar grid */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
+
+/* Days of the week */
+.calendar-day {
+    font-weight: bold;
+    color: #002557;
+}
+
+/* Dates */
+.calendar-date {
+    background: #f2f2f2;
+    padding: 8px 0;
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+
+.calendar-date:hover {
+    background: #38B6FF;
+    color: white;
+    cursor: pointer;
+}
+
+@media (max-width: 900px) {
+    .stats-grid {
+        grid-template-columns: 1fr; /* stack cards vertically on small screens */
+    }
+
+    .calendar-card {
+        height: 350px;
+		grid-column: span 2;
+    }
+
+    .product-image-card {
+        height: 350px;
+    }
+}

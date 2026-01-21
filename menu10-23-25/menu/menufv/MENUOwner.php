@@ -25,7 +25,7 @@
 		<a href="MENUOwner.php" class="active-button"><p class="header-logout">MY STORE PRODUCTS</p></a>
 		<a href="MENUOwnerIncoming.php" class="header-button"><p class="header-logout">INCOMING ORDERS</p></a>
 		<a href="MENUOwnerHistory.php" class="header-button"><p class="header-logout">ORDER HISTORY</p></a>
-		<a href="MENUOwnerStats.php" class="header-button"><p class="header-logout">ORDER STATISTICS</p></a>
+		<a href="MENUOwnerStats.php" class="header-button"><p class="header-logout">SALES REPORTS</p></a>
 		<a href="logout.php" class="header-button"><p class="header-logout">LOGOUT</p></a>
     </header>
       <div class="grid-container" id="product-grid">
@@ -48,9 +48,15 @@
 			<input type="text" id="product-name" required />
 			
 			<label for="product-amount">Available Stock:</label>
-			<button type="button" id="btnpos" onclick="changeQuantity(1)">+</button>
-			<input type="number" id="product-amount" required />
-			<button type="button" id="btnneg" onclick="changeQuantity(-1)">-</button>
+			<table>
+				<tr>
+					<td rowspan=2><input type="number" id="product-amount" required /></td>
+					<td><button type="button" id="btnpos" onclick="changeQuantity(1)">+</button></td>
+				</tr>
+				<tr>
+					<td><button type="button" id="btnneg" onclick="changeQuantity(-1)">-</button></td>
+				</tr>
+			</table>
 
 			<label for="product-price">Price:</label>
 			<input type="number" id="product-price" step="0.01" required />
@@ -74,10 +80,16 @@
 			<label for="edit-product-name">Product Name:</label>
 			<input type="text" id="edit-product-name" required />
 			
-			<label for="edit-product-amount">Available Stock:</label>	
-			<button type="button" id="btnpos" onclick="changeEditQuantity(1)">+</button>
-			<input type="number" id="edit-product-amount" required />
-			<button type="button" id="btnneg" onclick="changeEditQuantity(-1)">-</button>
+			<label for="edit-product-amount">Available Stock:</label>
+			<table>
+				<tr>
+					<td rowspan=2><input type="number" id="edit-product-amount" required /></td>
+					<td><button type="button" id="btnpos" onclick="changeEditQuantity(1)">+</button></td>
+				</tr>
+				<tr>
+					<td><button type="button" id="btnneg" onclick="changeEditQuantity(-1)">-</button></td>
+				</tr>
+			</table>
 
 			<label for="edit-product-price">Price:</label>
 			<input type="number" id="edit-product-price" step="0.01" required />

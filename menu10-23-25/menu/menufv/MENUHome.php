@@ -20,6 +20,7 @@
 			<img src="MenuLOGO.png" alt="Header Image" class="header-image" />
 			<a class="active-button" href="MENUHome.php"><p class="header-logout">VIEW MENU</p></a>
 			<a href="MENUCart.php" class="header-button"><p class="header-logout">VIEW CART</p></a>
+			<a href="MENUCustomerOrders.php" class="header-button"><p class="header-logout">MY ORDERS</p></a>
 			<a href="MENUCustomerHistory.php" class="header-button"><p class="header-logout">ORDER HISTORY</p></a>
 			<a href="logout.php" class="header-button"><p class="header-logout">LOGOUT</p></a>
 		<!--</div>-->
@@ -85,9 +86,15 @@
 						<input type="hidden" name="product_price" id="modal-price">
 						<p id="modal-showAvail"></p>
 						<label for="product_quantity">Quantity:</label><br/>
-						<button type="button" id="btnneg" onclick="changeQuantity(-1)">-</button>
-						<input type="number" name="product_quantity" id="modal-quantity" value="1" min="1" style="width: 50%;">
-						<button type="button" id="btnpos" onclick="changeQuantity(1)">+</button><br/><br/>
+						<table>
+						<tr>
+						<td rowspan=2><input type="number" name="product_quantity" id="modal-quantity" value="1" min="1" style="width: 50%;"></td>
+						<td><button type="button" id="btnpos" onclick="changeQuantity(1)">+</button>
+						</tr>
+						<tr>
+						<td><button type="button" id="btnneg" onclick="changeQuantity(-1)">-</button></td>
+						</tr>
+						</table><br/>
 						<button type="button" class="checkout-button" onclick="addToCart(
 							document.getElementById('modal-prodId').value,
 							document.getElementById('modal-title').innerText,

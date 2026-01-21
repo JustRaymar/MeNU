@@ -21,14 +21,14 @@
 		<img src="MenuLOGO.png" alt="Header Image" class="header-image" />
 		<a class="header-button" href="MENUHome.php"><p class="header-logout">VIEW MENU</p></a>
 		<a href="MENUCart.php" class="header-button"><p class="header-logout">VIEW CART</p></a>
-		<a href="MENUCustomerOrders.php" class="header-button"><p class="header-logout">MY ORDERS</p></a>
-		<a href="MENUCustomerHistory.php" class="active-button"><p class="header-logout">ORDER HISTORY</p></a>
+		<a href="MENUCustomerOrders.php" class="active-button"><p class="header-logout">MY ORDERS</p></a>
+		<a href="MENUCustomerHistory.php" class="header-button"><p class="header-logout">ORDER HISTORY</p></a>
 		<a href="logout.php" class="header-button"><p class="header-logout">LOGOUT</p></a>
     </header>
 	<center>
 		<table border="1px">
 			<tr>
-				<th colspan=6>MY ORDER HISTORY</th>
+				<th colspan=3>PENDING ORDERS</th>
 			</tr>
 			<?php
 				include("connection.php");
@@ -44,7 +44,7 @@
 
 				$start = ($pagen-1) * $limit;  
 				
-				$sql = "SELECT * FROM orders WHERE UserID = ".$_SESSION['user_id']." AND Status = 'Completed' OR UserID = ".$_SESSION['user_id']." AND Status = 'Cancelled' ORDER BY TimeOrdered DESC LIMIT ".$start.",".$limit."";
+				$sql = "SELECT * FROM orders WHERE UserID = ".$_SESSION['user_id']." AND Status = 'Pending' ORDER BY TimeOrdered DESC LIMIT ".$start.",".$limit."";
 				$res = $con->query($sql);
 				if ($res->num_rows>0) {
 					while ($row=$res->fetch_assoc()) {
@@ -68,15 +68,13 @@
 								}
 							}
 						echo "
-							<td><p class='prodname'>".strtoupper($product)."</p></td>
-							<td><p class='orderdisp'>x".$row['Quantity']."</p></td>
-							<td><p class='orderdisp'>".$customer."</p></td>
-							<td><p class='orderdisp'>₱".$row['OrderPrice']."</p></td>";
+							<td><img style='height: 200px; width: 100%; object-fit: contain;' src='modals/".$product."_r.png'><p class='prodname'>".strtoupper($product)."</p></td>
+							<td><p class='orderdisp'>x".$row['Quantity']." | ₱".$row['OrderPrice']."</p>";
 							if ($row['Status'] == 'Completed') {
-								echo"<td><p class='orderdisp'>Order is ".$row['Status']."!</p></td>";
+								echo"Order is ".$row['Status']."!<br/></td>";
 							} else {
 								if ($row['Status'] == 'Cancelled') {
-									echo"<td><p class='orderdisp'>Order is ".$row['Status']."!</p></td>";
+									echo"Order is ".$row['Status']."!</td>";
 								} else {
 									echo"Order is ".$row['Status']."...</td>";
 								}
@@ -91,7 +89,7 @@
 		<br/>
 		<div class="pagination">
 			<?php  
-				$sqlN = "SELECT COUNT(*) AS 'Total' FROM orders WHERE UserID = ".$_SESSION['user_id']." AND Status = 'Completed' OR Status = 'Cancelled'";  
+				$sqlN = "SELECT COUNT(*) AS 'Total' FROM orders WHERE UserID = ".$_SESSION['user_id']." AND Status = 'Pending'";  
 				$resN = $con->query($sqlN); 
 				$rowN = $resN->fetch_assoc();  
 				$total_records = $rowN['Total'];  
@@ -101,10 +99,10 @@
 				$pagLink = "";                        
 				for ($i=1; $i<=$total_pages; $i++) {
 				  if ($i==$pagen) {
-					  $pagLink .= "<a class='active' href='MENUCustomerHistory.php?page=".$i."'>".$i."</a>";
+					  $pagLink .= "<a class='active' href='MENUCustomerOrders.php?page=".$i."'>".$i."</a>";
 				  }            
 				  else  {
-					  $pagLink .= "<a href='MENUCustomerHistory.php?page=".$i."'>".$i."</a>";  
+					  $pagLink .= "<a href='MENUCustomerOrders.php?page=".$i."'>".$i."</a>";  
 				  }
 				};  
 				echo $pagLink;  
@@ -147,9 +145,9 @@
 							<tr>
 								<td>eTransaction Reference Number:<td>
 								<td>
-									<input type="checkbox" id="myCheckbox" checked disabled>
+									<input type="checkbox" id="myCheckbox" disabled>
 									<div class="content-to-toggle">
-									<input type="text" placeholder="Reference number" value="1234 1234 1234" readonly>
+									<input type="text" placeholder="Reference number" readonly>
 									</div>
 								</td>
 							</tr>
@@ -159,11 +157,11 @@
 							</tr>
 							<tr>
 								<td>Time Completed:<td>
-								<td>2025-09-23 12:47:36</td>
+								<td>-</td>
 							</tr>
 							<tr>
 								<td>Status:<td>
-								<td>Completed</td>
+								<td>Pending</td>
 							</tr>
 							<tr>
 								<td>Priority Order:<td>
@@ -171,9 +169,7 @@
 							</tr>
 						</table><br/>
 						<p class='prodname'>Feedback</p>
-						<textarea class="review"></textarea>
-						<button class='total-button'>Submit your review</button>
-						<br/>
+						<textarea class="review"></textarea><br/>
 					</form>
 				</div>
 			</div>

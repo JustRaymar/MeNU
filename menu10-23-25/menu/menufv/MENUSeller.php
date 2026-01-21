@@ -47,9 +47,15 @@
 			<input type="text" id="product-name" required />
 			
 			<label for="product-amount">Available Stock:</label>
-			<button type="button" id="btnpos" onclick="changeQuantity(1)">+</button>
-			<input type="number" id="product-amount" required />
-			<button type="button" id="btnneg" onclick="changeQuantity(-1)">-</button>
+			<table>
+				<tr>
+					<td rowspan=2><input type="number" id="product-amount" required /></td>
+					<td><button type="button" id="btnpos" onclick="changeQuantity(1)">+</button></td>
+				</tr>
+				<tr>
+					<td><button type="button" id="btnneg" onclick="changeQuantity(-1)">-</button></td>
+				</tr>
+			</table>
 
 			<label for="product-price">Price:</label>
 			<input type="number" id="product-price" step="0.01" required />
@@ -73,10 +79,16 @@
 			<label for="edit-product-name">Product Name:</label>
 			<input type="text" id="edit-product-name" required />
 			
-			<label for="edit-product-amount">Available Stock:</label>	
-			<button type="button" id="btnpos" onclick="changeEditQuantity(1)">+</button>
-			<input type="number" id="edit-product-amount" required />
-			<button type="button" id="btnneg" onclick="changeEditQuantity(-1)">-</button>
+			<label for="edit-product-amount">Available Stock:</label>			
+			<table>
+				<tr>
+					<td rowspan=2><input type="number" id="edit-product-amount" required /></td>
+					<td><button type="button" id="btnpos" onclick="changeEditQuantity(1)">+</button></td>
+				</tr>
+				<tr>
+					<td><button type="button" id="btnneg" onclick="changeEditQuantity(-1)">-</button></td>
+				</tr>
+			</table>
 
 			<label for="edit-product-price">Price:</label>
 			<input type="number" id="edit-product-price" step="0.01" required />

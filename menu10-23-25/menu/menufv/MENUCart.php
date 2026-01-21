@@ -18,6 +18,7 @@
 		<img src="MenuLOGO.png" alt="Header Image" class="header-image" />
 		<a class="header-button" href="MENUHome.php"><p class="header-logout">VIEW MENU</p></a>
 		<a href="MENUCart.php" class="active-button"><p class="header-logout">VIEW CART</p></a>
+		<a href="MENUCustomerOrders.php" class="header-button"><p class="header-logout">MY ORDERS</p></a>
 		<a href="MENUCustomerHistory.php" class="header-button"><p class="header-logout">ORDER HISTORY</p></a>
 		<a href="logout.php" class="header-button"><p class="header-logout">LOGOUT</p></a>
     </header>
